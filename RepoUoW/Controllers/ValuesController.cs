@@ -18,9 +18,11 @@ namespace RepoUoW.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int id)
         {
-            var c = await repository.GetAsync<Country, int>(id);
+            //var c = await repository.GetAsync<Country, int>(id);
+            //return Ok(c!);
 
-            return Ok(c!);
+            var c1 = await repository.GetAsync<Country>(c => c.Id == id, c => c.Name);
+            return Ok(c1);
         }
     }
 }

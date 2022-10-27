@@ -17,7 +17,7 @@ namespace RepoUoW.Repositories
         public async Task<T?> GetAsync<T, TId>(TId id) where T : BaseEntity<TId>
             => await context.Set<T>().FirstOrDefaultAsync(e => e.Id.Equals(id));
 
-        public async Task<IEnumerable<T>> GetAsync<T, TOrderKey>(Expression<Func<T, bool>> predicate, Expression<Func<T, TOrderKey>> orderBy) where T : BaseEntity
+        public async Task<IEnumerable<T>> GetAsync<T>(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> orderBy) where T : BaseEntity
             => await context.Set<T>().Where(predicate).OrderBy(orderBy).ToListAsync();
     }
 }
