@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  repouow:
+    image: ${DOCKER_REGISTRY-}repouow
+    build:
+      context: .
+      dockerfile: RepoUoW/Dockerfile
+    networks:
+      - mysql_network
+      
+  mysql:
+    image: mysql:8
+    container_name: "mysql"
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=password
+      - MYSQL_USER=mysqlusr
+      - MYSQL_DATABASE=repository
+    networks:
+      - mysql_network
+
+networks:
+  mysql_network:
+    driver: bridge
