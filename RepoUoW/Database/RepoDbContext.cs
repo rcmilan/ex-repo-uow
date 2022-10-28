@@ -22,7 +22,7 @@ namespace RepoUoW.Database
 
             modelBuilder.Entity<Country>()
                 .HasMany(c => c.Cities)
-                .WithOne()
+                .WithOne(c => c.Country)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -40,15 +40,7 @@ namespace RepoUoW.Database
                 new Country { Id = 2, Name = "o paisão" }
             };
 
-            City city1 = new()
-            {
-                Id = 1,
-                Name = "Cidade 1",
-                Country = countries[1]
-            };
-
             modelBuilder.Entity<Country>().HasData(countries);
-            modelBuilder.Entity<City>().HasData(city1);
         }
     }
 }

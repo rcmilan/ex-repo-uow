@@ -12,8 +12,11 @@ builder.Services.AddDbContext<RepoDbContext>(options =>
     var mySqlConnection = new MySqlConnection(connString);
 
     options
+        .EnableSensitiveDataLogging()
         .UseLazyLoadingProxies()
         .UseMySql(connString, ServerVersion.AutoDetect(mySqlConnection));
+
+
 });
 
 builder.Services.AddScoped<IRepository, Repository>();
