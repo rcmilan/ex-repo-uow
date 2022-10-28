@@ -7,10 +7,10 @@ namespace RepoUoW.Repositories
     {
         Task<T> AddAsync<T>(T entity) where T : BaseEntity;
 
+        int Commit();
+
         Task<T?> GetAsync<T, TId>(TId id) where T : BaseEntity<TId>;
 
         Task<IEnumerable<T>> GetAsync<T>(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> orderBy) where T : BaseEntity;
-
-        int Commit();
     }
 }

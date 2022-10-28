@@ -5,9 +5,10 @@ using System.Linq.Expressions;
 
 namespace RepoUoW.Repositories
 {
-    internal sealed class Repository : IRepository
+    internal sealed class Repository : IRepository, IDisposable
     {
         private readonly RepoDbContext context;
+        private bool disposedValue;
 
         public Repository(RepoDbContext context)
         {
@@ -21,12 +22,31 @@ namespace RepoUoW.Repositories
             return entity;
         }
 
+        public int Commit() => context.SaveChanges();
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
         public async Task<T?> GetAsync<T, TId>(TId id) where T : BaseEntity<TId>
-            => await context.Set<T>().FirstOrDefaultAsync(e => e.Id.Equals(id));
+                            => await context.Set<T>().FirstOrDefaultAsync(e => e.Id.Equals(id));
 
         public async Task<IEnumerable<T>> GetAsync<T>(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> orderBy) where T : BaseEntity
             => await context.Set<T>().Where(predicate).OrderBy(orderBy).ToListAsync();
 
-        public int Commit() => context.SaveChanges();
+        private void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    this.context.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
     }
 }
