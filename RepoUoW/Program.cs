@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using RepoUoW.Database;
@@ -17,6 +18,11 @@ builder.Services.AddDbContext<RepoDbContext>(options =>
         .UseMySql(connString, ServerVersion.AutoDetect(mySqlConnection));
 
 
+});
+
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.SerializerOptions.MaxDepth = 2;
 });
 
 builder.Services.AddScoped<IRepository, Repository>();
