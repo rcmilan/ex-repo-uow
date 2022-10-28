@@ -3,6 +3,6 @@
     public class Country : BaseEntity<int>
     {
         public string Name { get; init; } = default!;
-        public virtual IEnumerable<City> Cities { get; set; } = default!;
+        public virtual IList<City> Cities { get; set; } = default!;
     }
 }

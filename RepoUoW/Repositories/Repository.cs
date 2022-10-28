@@ -14,10 +14,19 @@ namespace RepoUoW.Repositories
             this.context = context;
         }
 
+        public async Task<T> AddAsync<T>(T entity) where T : BaseEntity
+        {
+            await context.Set<T>().AddAsync(entity);
+
+            return entity;
+        }
+
         public async Task<T?> GetAsync<T, TId>(TId id) where T : BaseEntity<TId>
             => await context.Set<T>().FirstOrDefaultAsync(e => e.Id.Equals(id));
 
         public async Task<IEnumerable<T>> GetAsync<T>(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> orderBy) where T : BaseEntity
             => await context.Set<T>().Where(predicate).OrderBy(orderBy).ToListAsync();
+
+        public int Commit() => context.SaveChanges();
     }
 }

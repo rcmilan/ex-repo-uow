@@ -22,7 +22,7 @@ namespace RepoUoW.Database
 
             modelBuilder.Entity<Country>()
                 .HasMany(c => c.Cities)
-                .WithOne(c => c.Country)
+                .WithOne()
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
 
