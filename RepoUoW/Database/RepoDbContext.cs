@@ -11,12 +11,22 @@ namespace RepoUoW.Database
         }
 
         public DbSet<Country> Countries { get; set; }
+        public DbSet<City> Cities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Country>()
+                .HasKey(c => c.Id);
+
+            modelBuilder.Entity<Country>()
+                .HasMany(c => c.Cities)
+                .WithOne()
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<City>()
                 .HasKey(c => c.Id);
 
             SeedData(modelBuilder);
@@ -26,10 +36,19 @@ namespace RepoUoW.Database
         {
             List<Country> countries = new()
             {
-                new Country { Id = 1, Name = "o intankavel"}
+                new Country { Id = 1, Name = "o intankavel"},
+                new Country { Id = 2, Name = "o paisão" }
+            };
+
+            City city1 = new()
+            {
+                Id = 1,
+                Name = "Cidade 1",
+                Country = countries[1]
             };
 
             modelBuilder.Entity<Country>().HasData(countries);
+            modelBuilder.Entity<City>().HasData(city1);
         }
     }
 }
