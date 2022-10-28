@@ -1,17 +1,45 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using RepoUoW.Entities;
 
 namespace RepoUoW.Database
 {
     internal sealed class RepoDbContext : DbContext
     {
+        private IDbContextTransaction _transaction;
+
         public RepoDbContext(DbContextOptions options) : base(options)
         {
             Database.Migrate();
         }
 
-        public DbSet<Country> Countries { get; set; }
         public DbSet<City> Cities { get; set; }
+
+        public DbSet<Country> Countries { get; set; }
+
+        public void BeginTransaction()
+        {
+            _transaction = Database.BeginTransaction();
+        }
+
+        public void Commit()
+        {
+            try
+            {
+                SaveChanges();
+                _transaction.Commit();
+            }
+            finally
+            {
+                _transaction.Dispose();
+            }
+        }
+
+        public void Rollback()
+        {
+            _transaction.Rollback();
+            _transaction.Dispose();
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
