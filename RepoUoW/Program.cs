@@ -16,13 +16,11 @@ builder.Services.AddDbContext<RepoDbContext>(options =>
         .EnableSensitiveDataLogging()
         .UseLazyLoadingProxies()
         .UseMySql(connString, ServerVersion.AutoDetect(mySqlConnection));
-
-
 });
 
 builder.Services.Configure<JsonOptions>(options =>
 {
-    options.SerializerOptions.MaxDepth = 2;
+    options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
 });
 
 builder.Services.AddScoped<IRepository, Repository>();
