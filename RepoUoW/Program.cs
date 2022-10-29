@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using RepoUoW.Database;
 using RepoUoW.Repositories;
+using RepoUoW.UoW;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IUoW, UnitOfWork>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

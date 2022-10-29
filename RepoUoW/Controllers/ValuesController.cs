@@ -2,6 +2,7 @@
 using RepoUoW.DTOs;
 using RepoUoW.Entities;
 using RepoUoW.Repositories;
+using RepoUoW.UoW;
 
 namespace RepoUoW.Controllers
 {
@@ -10,25 +11,45 @@ namespace RepoUoW.Controllers
     public sealed class ValuesController : ControllerBase
     {
         private readonly IRepository repository;
+        private readonly IUoW unitOfWork;
 
-        public ValuesController(IRepository repository)
+        public ValuesController(IRepository repository, IUoW unitOfWork)
         {
             this.repository = repository;
+            this.unitOfWork = unitOfWork;
         }
 
-        [HttpGet("country")]
-        public async Task<IActionResult> Get([FromQuery]int id)
+        [HttpPost("batch")]
+        public async Task<IActionResult> AddBatch(IList<AddCountryInput> addCountryInputs)
         {
-            if(id > 0)
+            unitOfWork.BeginTransaction();
+
+            var dbset = unitOfWork.DbSet<Country>();
+
+            foreach (var country in addCountryInputs)
             {
-                var c = await repository.GetAsync<Country, int>(id);
+                var c = new Country
+                {
+                    Name = country.Name,
+                    Cities = new List<City>()
+                };
 
-                return Ok(c);
+                foreach (var city in country.Cities)
+                {
+                    var ct = new City
+                    {
+                        Name = city.Name
+                    };
+
+                    c.Cities.Add(ct);
+                }
+
+                await dbset.AddAsync(c);
             }
-            
-            var c1 = await repository.GetAsync<Country>(c => true, c => c.Name);
 
-            return Ok(c1);
+            unitOfWork.Commit();
+
+            return Ok();
         }
 
         [HttpPost("city")]
@@ -44,10 +65,25 @@ namespace RepoUoW.Controllers
             country.Cities.Add(city);
 
             await repository.AddAsync(city);
-            
+
             repository.Commit();
 
             return Ok(country);
+        }
+
+        [HttpGet("country")]
+        public async Task<IActionResult> Get([FromQuery] int id)
+        {
+            if (id > 0)
+            {
+                var c = await repository.GetAsync<Country, int>(id);
+
+                return Ok(c);
+            }
+
+            var c1 = await repository.GetAsync<Country>(c => true, c => c.Name);
+
+            return Ok(c1);
         }
     }
 }
