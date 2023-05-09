@@ -15,14 +15,14 @@ namespace RepoUoW.Repositories
             this.context = context;
         }
 
-        public async Task<T> AddAsync<T>(T entity) where T : BaseEntity
+        public async Task<T> AddAsync<T>(T entity, bool persist = true) where T : BaseEntity
         {
             await context.Set<T>().AddAsync(entity);
 
+            if (persist) await context.SaveChangesAsync();
+
             return entity;
         }
-
-        public int Commit() => context.SaveChanges();
 
         public void Dispose()
         {

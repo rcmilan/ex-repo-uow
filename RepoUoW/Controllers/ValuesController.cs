@@ -20,12 +20,8 @@ namespace RepoUoW.Controllers
         }
 
         [HttpPost("batch")]
-        public async Task<IActionResult> AddBatch(IList<AddCountryInput> addCountryInputs)
+        public async Task<IActionResult> AddBatch(IEnumerable<AddCountryInput> addCountryInputs)
         {
-            unitOfWork.BeginTransaction();
-
-            var dbset = unitOfWork.DbSet<Country>();
-
             foreach (var country in addCountryInputs)
             {
                 var c = new Country
@@ -44,10 +40,10 @@ namespace RepoUoW.Controllers
                     c.Cities.Add(ct);
                 }
 
-                await dbset.AddAsync(c);
+                await unitOfWork.AddAsync(c);
             }
 
-            unitOfWork.Commit();
+            await unitOfWork.Commit();
 
             return Ok();
         }
@@ -57,6 +53,8 @@ namespace RepoUoW.Controllers
         {
             var country = await repository.GetAsync<Country, int>(addCityInput.CountryId);
 
+            if (country is null) return NotFound();
+
             var city = new City()
             {
                 Name = addCityInput.Name
@@ -65,8 +63,6 @@ namespace RepoUoW.Controllers
             country.Cities.Add(city);
 
             await repository.AddAsync(city);
-
-            repository.Commit();
 
             return Ok(country);
         }

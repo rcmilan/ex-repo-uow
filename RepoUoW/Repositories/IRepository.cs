@@ -5,9 +5,7 @@ namespace RepoUoW.Repositories
 {
     public interface IRepository
     {
-        Task<T> AddAsync<T>(T entity) where T : BaseEntity;
-
-        int Commit();
+        Task<T> AddAsync<T>(T entity, bool persist = true) where T : BaseEntity;
 
         Task<T?> GetAsync<T, TId>(TId id) where T : BaseEntity<TId>;
 

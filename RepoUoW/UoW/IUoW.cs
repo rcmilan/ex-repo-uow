@@ -1,16 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RepoUoW.Entities;
+﻿using RepoUoW.Repositories;
 
 namespace RepoUoW.UoW
 {
-    public interface IUoW
+    public interface IUoW : IRepository
     {
-        void BeginTransaction();
-
-        void Commit();
-
-        DbSet<T> DbSet<T>() where T : BaseEntity;
-
-        void Rollback();
+        Task Commit();
     }
 }

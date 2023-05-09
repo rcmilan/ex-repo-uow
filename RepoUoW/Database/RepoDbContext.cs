@@ -22,23 +22,27 @@ namespace RepoUoW.Database
             _transaction = Database.BeginTransaction();
         }
 
-        public void Commit()
+        public Task Commit()
         {
             try
             {
-                SaveChanges();
-                _transaction.Commit();
+                SaveChangesAsync();
+                _transaction.CommitAsync();
             }
             finally
             {
-                _transaction.Dispose();
+                _transaction.DisposeAsync();
             }
+
+            return Task.CompletedTask;
         }
 
-        public void Rollback()
+        public Task Rollback()
         {
-            _transaction.Rollback();
-            _transaction.Dispose();
+            _transaction.RollbackAsync();
+            _transaction.DisposeAsync();
+
+            return Task.CompletedTask;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
